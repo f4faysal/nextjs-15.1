@@ -9,13 +9,6 @@ export const getUserRole = async () => {
   if (session) {
     const uuid = session.user?.id;
 
-    // Sanitize input
-    const uuidRegExp: RegExp =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-    if (typeof uuid !== "string" || !uuidRegExp.test(uuid)) {
-      throw new Error("Invalid UUID");
-    }
-
     const user = await db.user.findUnique({
       where: {
         id: uuid,

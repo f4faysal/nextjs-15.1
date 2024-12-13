@@ -10,7 +10,7 @@ export default function Home() {
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-gray-800 text-lg">MyApp</div>
           <div>
-            <Link href="/login">
+            <Link href="/auth/sign-in">
               <Button variant="default" className="mr-4">
                 Login
               </Button>

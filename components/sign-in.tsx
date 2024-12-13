@@ -2,6 +2,8 @@
 
 import { FcGoogle } from "react-icons/fc";
 import { useTransition, useState } from "react";
+import { handleEmailSignIn } from "@/lib/action/auth/emailSignInServerAction";
+import { handleGoogleSignIn } from "@/lib/action/auth/googleSignInServerAction";
 
 export const SignInPage: React.FC = () => {
   const [isPending, startTransition] = useTransition();

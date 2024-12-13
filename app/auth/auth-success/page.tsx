@@ -1,32 +1,36 @@
-"use server";
+import { Button } from "@/components/ui/button";
+import { Link } from "lucide-react";
+import { RxCheckCircled } from "react-icons/rx";
 
-import { auth } from "@/auth";
+const AuthSuccessPage: React.FC = () => {
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+      <div className="max-w-md w-full mx-4 p-8 bg-white rounded-lg shadow-lg animate-fade-in">
+        <div className="text-center space-y-4">
+          <RxCheckCircled className="w-16 h-16 mx-auto text-green-500 animate-bounce-small" />
+          <h1 className="text-2xl font-semibold text-gray-900">Success!</h1>
+          <p className="text-gray-600">
+            Please check your email inbox for sign in link.
+          </p>
+        </div>
 
-// Deletes the user's Google account record from the database
-export const unlinkGoogleAccount = async () => {
-  // Check if the user is authenticated
-  const session = await auth();
-  if (!session) {
-    throw new Error("Unauthorized");
-  }
-
-  const uuid: string = session.user.id;
-
-  // Sanitize input
-  const uuidRegExp: RegExp =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-  if (typeof uuid !== "string" || !uuidRegExp.test(uuid)) {
-    throw new Error("Invalid UUID");
-  }
-
-  // Remove the Google account from the database
-  try {
-    await pool.query(
-      "DELETE FROM accounts WHERE provider = 'google' AND \"userId\" = $1",
-      [uuid]
-    );
-    return true;
-  } catch (error) {
-    console.error("Failed to unlink Google account:", error);
-  }
+        <div className="mt-8 text-center">
+          <p className="text-gray-500">
+            Didn&apos;t receive an email? To go back to the sign-in page and try
+            again,{" "}
+            <Link href="/api/auth/signin">
+              <Button
+                variant="link"
+                className="font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                Click Here
+              </Button>
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 };
+
+export default AuthSuccessPage;
