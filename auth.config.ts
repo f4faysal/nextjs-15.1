@@ -57,16 +57,15 @@ export default {
         if (!user || !user.isActive) {
           return null;
         }
-        // Verify password for email-based accounts
-        if (user.password) {
-          const isPasswordValid = await bcrypt.compare(
-            credentials.password as string,
-            user.password
-          );
 
-          if (!isPasswordValid) {
-            return null;
-          }
+        // Verify password for email-based accounts
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password as string,
+          user.password as string
+        );
+
+        if (!isPasswordValid) {
+          return null;
         }
 
         return {
