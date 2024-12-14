@@ -24,10 +24,10 @@ const FormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
   password: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters long." })
-    .regex(/[A-Z]/, { message: "Password must include an uppercase letter." })
-    .regex(/[a-z]/, { message: "Password must include a lowercase letter." })
-    .regex(/[0-9]/, { message: "Password must include a number." }),
+    .min(8, { message: "Password must be at least 8 characters long." }),
+  // .regex(/[A-Z]/, { message: "Password must include an uppercase letter." })
+  // .regex(/[a-z]/, { message: "Password must include a lowercase letter." })
+  // .regex(/[0-9]/, { message: "Password must include a number." }),
 });
 
 export function SignInPage() {
@@ -49,6 +49,7 @@ export function SignInPage() {
       });
 
       if (!result || result.error) {
+        console.log("Login failed:", result?.error);
         toast({
           title: "Login failed",
           description: "Invalid email or password. Please try again.",

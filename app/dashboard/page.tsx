@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import SignOut from "@/components/signout";
 import { checkIsAuthenticated } from "@/lib/action/auth/checkIsAuthenticated";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 const Dashboard: React.FC = async () => {
@@ -40,6 +41,18 @@ const Dashboard: React.FC = async () => {
             <div className="text-gray-500">Token</div>
             <div className="text-sm">{token}</div>
           </div>
+        </div>
+
+        {/* content */}
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold">Content</h2>
+          <p className="text-gray-500">This is the main content area.</p>
+          <Link
+            href={`/dashboard/${session?.user?.id}`}
+            className="text-blue-500"
+          >
+            Go to User Management
+          </Link>
         </div>
       </div>
     </div>

@@ -7,11 +7,11 @@ export default function UserManagementPage({
 }) {
   console.log(params.adminId);
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-6">
-        User Management {params.adminId}
-      </h1>
-      <UserManagementForm adminId={params.adminId} />
+    <div className="flex items-center justify-center">
+      <div className="py-10 w-[500px]">
+        <h1 className="text-2xl font-bold mb-6">User Management</h1>
+        <UserManagementForm adminId={params.adminId} />
+      </div>
     </div>
   );
 }
