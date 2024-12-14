@@ -1,74 +1,70 @@
 "use client";
 
-import { FcGoogle } from "react-icons/fc";
-import { useTransition, useState } from "react";
-import { handleEmailSignIn } from "@/lib/action/auth/emailSignInServerAction";
-import { handleGoogleSignIn } from "@/lib/action/auth/googleSignInServerAction";
-import { Button } from "./ui/button";
-import { FiGithub } from "react-icons/fi";
-import { Input } from "./ui/input";
-import { handleGitHubSignIn } from "@/lib/action/auth/gitHubSignInServerAction";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-export const SignInPage: React.FC = () => {
-  const [isPending, startTransition] = useTransition();
-  const [formData, setFormData] = useState({ email: "" as string });
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault(); // Prevents the form from submitting and reloading the page, allowing us to handle the submission in TypeScript.
-    try {
-      startTransition(async () => {
-        await handleEmailSignIn(formData.email);
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+const FormSchema = z.object({
+  username: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+});
+
+export function SignInPage() {
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      username: "",
+    },
+  });
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+  }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-md">
-        <h2 className="mb-6 text-center text-2xl font-bold text-gray-800">
-          Sign In
-        </h2>
-        <div>
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <Input
-              type="email"
-              maxLength={320}
-              placeholder="Email Address"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setFormData({ email: event.target.value })
-              }
-              disabled={isPending}
-              required
-            />
-            <button
-              className="w-full rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-              type="submit"
-              disabled={isPending}
-            >
-              Sign in with Email
-            </button>
-          </form>
-
-          <div className="my-6 flex items-center">
-            <div className="h-px flex-1 bg-gray-300"></div>
-            <span className="px-3 text-sm text-gray-500">or</span>
-            <div className="h-px flex-1 bg-gray-300"></div>
-          </div>
-
-          <div className="space-y-3">
-            <Button variant={"outline"} onClick={() => handleGoogleSignIn()}>
-              <FcGoogle className="mr-2 h-5 w-5" />
-              Sign in with Google
-            </Button>
-            <Button variant={"outline"} onClick={() => handleGitHubSignIn()}>
-              <FiGithub className="mr-2 h-5 w-5" />
-              Sign in with GitHub
-            </Button>
-          </div>
-        </div>
-      </div>
+    <div className="flex h-screen items-center justify-center">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-72 space-y-6">
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input placeholder="shadcn" {...field} />
+                </FormControl>
+                <FormDescription>
+                  This is your public display name.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Submit</Button>
+        </form>
+      </Form>
     </div>
   );
-};
+}

@@ -15,7 +15,7 @@ export default {
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
-      allowDangerousEmailAccountLinking: true, // Allow automatic linking of users table to accounts table in database - not dangerous when used with OAuth providers that already perform email verification (like Google)
+      allowDangerousEmailAccountLinking: true,
     }),
     GitHub({
       clientId: process.env.AUTH_GITHUB_ID,
@@ -37,7 +37,6 @@ export default {
     async jwt({ token, user, session, trigger }) {
       if (trigger === "update" && session?.name !== token.name) {
         token.name = session.name;
-
         try {
           await setName(token?.name ?? "");
         } catch (error) {
