@@ -105,24 +105,6 @@ export default {
     //   return session;
     // },
 
-    async session({ session, token }) {
-      console.log("session callback", { session, token });
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id as string,
-          role: token.role as Role,
-        },
-      };
-    },
-    // async jwt({ token, user }) {
-    //   if (user) {
-    //     token.role = user.role;
-    //   }
-    //   return token;
-    // },
-
     async jwt({ token, user, session, trigger }) {
       if (trigger === "update" && session?.name !== token.name) {
         token.name = session.name;
@@ -134,7 +116,9 @@ export default {
       }
 
       if (user) {
+        const { role } = user as { role: Role };
         await clearStaleTokens(); // Clear up any stale verification tokens from the database after a successful sign in
+        token.role = role;
         return {
           ...token,
           id: user.id,
@@ -142,6 +126,24 @@ export default {
       }
       return token;
     },
+
+    async session({ session, token }) {
+      console.log("session callback --->", { session, token });
+      session.user.role = token.role as Role;
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id as string,
+        },
+      };
+    },
+    // async jwt({ token, user }) {
+    //   if (user) {
+    //     token.role = user.role;
+    //   }
+    //   return token;
+    // },
   },
   // callbacks: {
   //   async jwt({ token, user, session, trigger }) {
