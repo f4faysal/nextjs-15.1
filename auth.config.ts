@@ -105,11 +105,20 @@ export default {
     //   return session;
     // },
 
-    async jwt({ token, user, session, trigger }) {
-      if (trigger === "update" && session?.name !== token.name) {
-        token.name = session.name;
+    async jwt({ token, user, session, trigger, profile, account }) {
+      console.log("jwt callback --->", {
+        token,
+        user,
+        session,
+        trigger,
+        profile,
+        account,
+      });
+
+      if (trigger === "signIn" && user?.name === null) {
+        token.name = user.name;
         try {
-          await setName(token?.name ?? "");
+          await setName(user?.name ?? "");
         } catch (error) {
           console.error("Failed to set user name:", error);
         }

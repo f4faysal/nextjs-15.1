@@ -1,12 +1,19 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const AllUsersList = async ({ users }: any) => {
-  return (
-    <div className="w-[500px] py-10">
-      <h1 className="text-2xl font-bold mb-6">All Users</h1>
+import db from "@/db";
 
-      <UserList users={users} />
-    </div>
-  );
+export async function fetchUsers() {
+  "use server";
+  return await db.user.findMany({});
+}
+
+export const AllUsersList = async () => {
+  const users = (await fetchUsers()) as {
+    id: string;
+    email: string;
+    name: string;
+    role: string;
+  }[];
+
+  return <UserList users={users} />;
 };
 
 const UserList = ({
@@ -14,7 +21,7 @@ const UserList = ({
 }: {
   users: { id: string; email: string; name: string; role: string }[];
 }) => (
-  <div className="space-y-4">
+  <div className="space-y-2 overflow-y-auto">
     {users.map((user) => (
       <div
         key={user.id}
