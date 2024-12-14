@@ -8,6 +8,9 @@ import Google from "next-auth/providers/google";
 // import { setName } from "./lib/action/auth/setNameServerAction";
 import db from "./db";
 import bcrypt from "bcrypt";
+// import { Role } from "@prisma/client";
+import { setName } from "./lib/action/auth/setNameServerAction";
+import { clearStaleTokens } from "./lib/action/auth/clearStaleTokensServerAction";
 import { Role } from "@prisma/client";
 
 export default {
@@ -85,22 +88,57 @@ export default {
           where: { email: user.email! },
         });
 
+        console.log("account google --> ", account);
+        console.log("user google --> ", user);
+
         // Only allow sign-in for users created by admin
         return !!existingUser && existingUser.isActive;
       }
 
       return true;
     },
+    // async session({ session, token }) {
+    //   if (token.sub && session.user) {
+    //     session.user.id = token.sub;
+    //     session.user.role = token.role as Role;
+    //   }
+    //   return session;
+    // },
+
     async session({ session, token }) {
-      if (token.sub && session.user) {
-        session.user.id = token.sub;
-        session.user.role = token.role as Role;
-      }
-      return session;
+      console.log("session callback", { session, token });
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id as string,
+          role: token.role as Role,
+        },
+      };
     },
-    async jwt({ token, user }) {
+    // async jwt({ token, user }) {
+    //   if (user) {
+    //     token.role = user.role;
+    //   }
+    //   return token;
+    // },
+
+    async jwt({ token, user, session, trigger }) {
+      if (trigger === "update" && session?.name !== token.name) {
+        token.name = session.name;
+        try {
+          await setName(token?.name ?? "");
+        } catch (error) {
+          console.error("Failed to set user name:", error);
+        }
+      }
+
       if (user) {
-        token.role = user.role;
+        await clearStaleTokens(); // Clear up any stale verification tokens from the database after a successful sign in
+        return {
+          ...token,
+          id: user.id,
+        };
       }
       return token;
     },
