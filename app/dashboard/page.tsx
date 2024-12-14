@@ -1,76 +1,47 @@
+import { auth } from "@/auth";
 import SignOut from "@/components/signout";
 import { checkIsAuthenticated } from "@/lib/action/auth/checkIsAuthenticated";
 import { redirect } from "next/navigation";
-import { FiHome, FiUsers, FiSettings } from "react-icons/fi";
 
 const Dashboard: React.FC = async () => {
   const isAuthenticated = await checkIsAuthenticated();
+  const session = await auth();
 
   if (!isAuthenticated) {
     redirect("/auth/sign-in");
   }
 
+  const email = session?.user?.email;
+  const name = session?.user?.name;
+  const image = session?.user?.image;
+  const token = session?.expires;
+  const role = session?.user?.role;
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-screen w-64 bg-white shadow-lg">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
-        </div>
-        <nav className="mt-6">
-          <button className="flex w-full items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-            <FiHome className="mr-3" /> Home
-          </button>
-          <button className="flex w-full items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-            <FiUsers className="mr-3" /> Users
-          </button>
-          <button className="flex w-full items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-            <FiSettings className="mr-3" /> Settings
-          </button>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="flex flex-col p-10 rounded-3xl bg-red-50">
+        <div className="flex justify-between items-end mb-8">
+          <h1 className="text-xl font-bold ">Dashboard</h1>
           <SignOut />
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <main className="ml-64 p-8">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Stats Cards */}
-          <div className="rounded-lg bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-800">Total Users</h3>
-            <p className="mt-2 text-3xl font-bold text-blue-600">1,234</p>
-          </div>
-          <div className="rounded-lg bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-800">
-              Active Projects
-            </h3>
-            <p className="mt-2 text-3xl font-bold text-green-600">42</p>
-          </div>
-          <div className="rounded-lg bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-800">Revenue</h3>
-            <p className="mt-2 text-3xl font-bold text-purple-600">$52,000</p>
-          </div>
-
-          {/* Recent Activity Section */}
-          <div className="col-span-full mt-6 rounded-lg bg-white p-6 shadow-sm">
-            <h3 className="text-xl font-semibold text-gray-800">
-              Recent Activity
-            </h3>
-            <div className="mt-4 space-y-4">
-              {[1, 2, 3].map((item) => (
-                <div key={item} className="flex items-center border-b pb-4">
-                  <div className="h-10 w-10 rounded-full bg-gray-200"></div>
-                  <div className="ml-4">
-                    <p className="font-medium text-gray-800">
-                      User Action {item}
-                    </p>
-                    <p className="text-sm text-gray-500">2 hours ago</p>
-                  </div>
-                </div>
-              ))}
+        </div>
+        {/* user card */}
+        <div>
+          <span className="text-xs rounded-full px-2 py-1 bg-red-400 mr-14">
+            {role}
+          </span>
+          <div className="flex items-center space-x-4">
+            <img src={image} alt="user" className="w-12 h-12 rounded-full" />
+            <div>
+              <div className="text-lg font-semibold">{name}</div>
+              <div className="text-gray-500">{email}</div>
             </div>
           </div>
+          <div className="mt-4">
+            <div className="text-gray-500">Token</div>
+            <div className="text-sm">{token}</div>
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

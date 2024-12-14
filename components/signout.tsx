@@ -3,15 +3,17 @@
 import { handleSignOut } from "@/lib/action/auth/signOutServerAction";
 import React from "react";
 import { FiLogOut } from "react-icons/fi";
+import { Button } from "./ui/button";
 
 const SignOut = () => {
   return (
-    <button
+    <Button
+      variant={"secondary"}
       onClick={() => handleSignOut()}
-      className="flex w-full items-center px-6 py-3 text-red-600 hover:bg-red-50"
+      className="flex items-center rounded-full w-fit"
     >
-      <FiLogOut className="mr-3" /> Logout
-    </button>
+      <FiLogOut /> Logout
+    </Button>
   );
 };
 
