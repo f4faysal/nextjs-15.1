@@ -8,6 +8,7 @@ export default async function UserManagementPage({
 }: {
   params: { adminId: string };
 }) {
+  "use server";
   const users = await db.user.findMany({});
   console.log(params.adminId);
   return (
