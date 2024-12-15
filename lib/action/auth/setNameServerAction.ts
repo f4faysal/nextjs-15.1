@@ -20,3 +20,22 @@ export const setName = async (name: string) => {
   });
   return true;
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const setPicture = async (image: string, email: any) => {
+  // Check if the user is authenticated
+  // const session = await auth();
+  // if (!session) {
+  //   throw new Error("Unauthorized");
+  // }
+  // const id = session.user?.id as string;
+  await db.user.update({
+    where: {
+      email,
+    },
+    data: {
+      image,
+    },
+  });
+  return true;
+};

@@ -1,8 +1,9 @@
 import db from "@/db";
 
 export async function fetchUsers() {
-  "use server";
-  return await db.user.findMany({});
+  const users = await db.user.findMany({});
+  if (!users) return [];
+  return users;
 }
 
 export const AllUsersList = async () => {
@@ -12,6 +13,11 @@ export const AllUsersList = async () => {
     name: string;
     role: string;
   }[];
+
+  const isUser = users.length > 0;
+  if (!isUser) {
+    return <div>No users found</div>;
+  }
 
   return <UserList users={users} />;
 };

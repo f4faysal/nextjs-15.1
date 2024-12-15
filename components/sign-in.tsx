@@ -25,9 +25,6 @@ const FormSchema = z.object({
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters long." }),
-  // .regex(/[A-Z]/, { message: "Password must include an uppercase letter." })
-  // .regex(/[a-z]/, { message: "Password must include a lowercase letter." })
-  // .regex(/[0-9]/, { message: "Password must include a number." }),
 });
 
 export function SignInPage() {
@@ -48,20 +45,28 @@ export function SignInPage() {
         password: data.password,
       });
 
-      if (!result || result.error) {
-        console.log("Login failed:", result?.error);
+      // Check for login failure
+      if (result?.error) {
+        console.log("Login error:", result);
+        // Map specific error messages
+        const errorMessages: { [key: string]: string } = {
+          INVALID_LOGIN: "Invalid email or password. Please try again.",
+          CredentialsSignin:
+            "Authentication failed. Please check your credentials.",
+          default: "An unexpected error occurred. Please try again.",
+        };
+
+        const errorMessage =
+          errorMessages[result.error] || errorMessages["default"];
+
         toast({
-          title: "Login failed",
-          description: "Invalid email or password. Please try again.",
+          title: "Login Failed",
+          description: errorMessage,
+          variant: "destructive",
         });
+
         return;
       }
-
-      // Successful login
-      toast({
-        title: "Signed in successfully",
-        description: "Redirecting to your dashboard...",
-      });
 
       form.reset();
       router.push("/dashboard");

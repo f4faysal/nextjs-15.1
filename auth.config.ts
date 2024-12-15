@@ -1,7 +1,7 @@
 // import Nodemailer from "next-auth/providers/nodemailer";
 // import GitHub from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
-import type { NextAuthConfig } from "next-auth";
+import { type NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 
 // import { clearStaleTokens } from "./lib/action/auth/clearStaleTokensServerAction";
@@ -9,7 +9,7 @@ import Google from "next-auth/providers/google";
 import db from "./db";
 import bcrypt from "bcrypt";
 // import { Role } from "@prisma/client";
-import { setName } from "./lib/action/auth/setNameServerAction";
+import { setPicture } from "./lib/action/auth/setNameServerAction";
 import { clearStaleTokens } from "./lib/action/auth/clearStaleTokensServerAction";
 import { Role } from "@prisma/client";
 
@@ -76,6 +76,7 @@ export default {
           email: user.email,
           name: user.name,
           role: user.role,
+          image: user.image,
         };
       },
     }),
@@ -115,12 +116,21 @@ export default {
         account,
       });
 
-      if (trigger === "signIn" && user?.name === null) {
-        token.name = user.name;
+      if (trigger === "signIn" && user?.image === null) {
+        token.picture = profile?.picture;
+        console.log("jwt callback trigger--->", {
+          token,
+          user,
+          session,
+          trigger,
+          profile,
+          account,
+        });
         try {
-          await setName(user?.name ?? "");
+          await setPicture(profile?.picture, user?.email);
+          // await setName(user?.name ?? "");
         } catch (error) {
-          console.error("Failed to set user name:", error);
+          console.error("Failed to set user Image:", error);
         }
       }
 
