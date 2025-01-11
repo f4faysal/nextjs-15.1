@@ -1,14 +1,9 @@
-// import Nodemailer from "next-auth/providers/nodemailer";
-// import GitHub from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { type NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 
-// import { clearStaleTokens } from "./lib/action/auth/clearStaleTokensServerAction";
-// import { setName } from "./lib/action/auth/setNameServerAction";
 import db from "./db";
 import bcrypt from "bcrypt";
-// import { Role } from "@prisma/client";
 import { setPicture } from "./lib/action/auth/setNameServerAction";
 import { clearStaleTokens } from "./lib/action/auth/clearStaleTokensServerAction";
 import { Role } from "@prisma/client";
@@ -98,13 +93,6 @@ export default {
 
       return true;
     },
-    // async session({ session, token }) {
-    //   if (token.sub && session.user) {
-    //     session.user.id = token.sub;
-    //     session.user.role = token.role as Role;
-    //   }
-    //   return session;
-    // },
 
     async jwt({ token, user, session, trigger, profile, account }) {
       console.log("jwt callback --->", {
@@ -157,42 +145,5 @@ export default {
         },
       };
     },
-    // async jwt({ token, user }) {
-    //   if (user) {
-    //     token.role = user.role;
-    //   }
-    //   return token;
-    // },
   },
-  // callbacks: {
-  //   async jwt({ token, user, session, trigger }) {
-  //     if (trigger === "update" && session?.name !== token.name) {
-  //       token.name = session.name;
-  //       try {
-  //         await setName(token?.name ?? "");
-  //       } catch (error) {
-  //         console.error("Failed to set user name:", error);
-  //       }
-  //     }
-
-  //     if (user) {
-  //       await clearStaleTokens(); // Clear up any stale verification tokens from the database after a successful sign in
-  //       return {
-  //         ...token,
-  //         id: user.id,
-  //       };
-  //     }
-  //     return token;
-  //   },
-  //   async session({ session, token }) {
-  //     console.log("session callback", { session, token });
-  //     return {
-  //       ...session,
-  //       user: {
-  //         ...session.user,
-  //         id: token.id as string,
-  //       },
-  //     };
-  //   },
-  // },
 } satisfies NextAuthConfig;
