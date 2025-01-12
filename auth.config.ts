@@ -46,17 +46,15 @@ export default {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
-        // Find the user by email
+
         const user = await db.user.findUnique({
           where: { email: credentials.email as string },
         });
 
-        // Check if user exists and is active
         if (!user || !user.isActive) {
           return null;
         }
 
-        // Verify password for email-based accounts
         const isPasswordValid = await bcrypt.compare(
           credentials.password as string,
           user.password as string
@@ -78,7 +76,6 @@ export default {
   ],
   callbacks: {
     async signIn({ user, account }) {
-      // For Google sign-in, check if the user was created by an admin
       if (account?.provider === "google") {
         const existingUser = await db.user.findUnique({
           where: { email: user.email! },
@@ -87,7 +84,6 @@ export default {
         console.log("account google --> ", account);
         console.log("user google --> ", user);
 
-        // Only allow sign-in for users created by admin
         return !!existingUser && existingUser.isActive;
       }
 
@@ -116,7 +112,6 @@ export default {
         });
         try {
           await setPicture(profile?.picture, user?.email);
-          // await setName(user?.name ?? "");
         } catch (error) {
           console.error("Failed to set user Image:", error);
         }
@@ -124,7 +119,7 @@ export default {
 
       if (user) {
         const { role } = user as { role: Role };
-        await clearStaleTokens(); // Clear up any stale verification tokens from the database after a successful sign in
+        await clearStaleTokens();
         token.role = role;
         return {
           ...token,
