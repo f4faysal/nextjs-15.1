@@ -29,7 +29,3 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 - Technology 1
 - Technology 2
 - Technology 3
-
-## Contact
-
-If you have any questions, feel free to reach out at [your-email@example.com](mailto:your-email@example.com).
