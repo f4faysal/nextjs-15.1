@@ -107,25 +107,25 @@ export default {
     // },
 
     async jwt({ token, user, session, trigger, profile, account }) {
-      console.log("jwt callback --->", {
-        token,
-        user,
-        session,
-        trigger,
-        profile,
-        account,
-      });
+      // console.log("jwt callback --->", {
+      //   token,
+      //   user,
+      //   session,
+      //   trigger,
+      //   profile,
+      //   account,
+      // });
 
       if (trigger === "signIn" && user?.image === null) {
         token.picture = profile?.picture;
-        console.log("jwt callback trigger--->", {
-          token,
-          user,
-          session,
-          trigger,
-          profile,
-          account,
-        });
+        // console.log("jwt callback trigger--->", {
+        //   token,
+        //   user,
+        //   session,
+        //   trigger,
+        //   profile,
+        //   account,
+        // });
         try {
           await setPicture(profile?.picture, user?.email);
           // await setName(user?.name ?? "");
